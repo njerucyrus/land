@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div>
+<form action=""  method="POST">
+       <fieldset>
+            <legend>User Account Details</legend>
+            {{ user_form | crispy }}
+        </fieldset>
+        <fieldset>
+            <legend>Profile Details</legend>
+            {{ profile_form |crispy }}
+        </fieldset>
+{% csrf_token %}
+<input type="submit" value="Submit" class="btn btn-success btn-raised">
+
+</form>
+</div>
+
+{% endblock %}
