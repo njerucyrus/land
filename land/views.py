@@ -1,3 +1,4 @@
+from Crypto.Hash import SHA256
 from django.shortcuts import (
     render,
     render_to_response,
@@ -174,6 +175,7 @@ def land_detail(request, pk=None):
     return render(request, 'land/land_details.html', {'land': land, })
 
 
+
 @transaction.atomic()
 def buy_land(request, pk=None):
     land = get_object_or_404(Land, pk=pk)
@@ -203,9 +205,10 @@ def buy_land(request, pk=None):
                 deposit, land.user.first_name, land.user.last_name
             )
             transaction_id = randint(range_start, range_end)
+            id_hash = SHA256.new(str(transaction_id)).hexdigest()
             # create a payment model instance here
             payment = Payment.objects.create(
-                transaction_id=transaction_id,
+                transaction_id=id_hash,
                 phone_number=buyer_phone_number,
                 payment_mode="M-Pesa",
                 amount=amount,
