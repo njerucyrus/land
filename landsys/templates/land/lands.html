@@ -1,9 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="col col-md-6">
-
-  </div>
-
+    <div class="col col-md-12">
+        {% if lands %}
+            <table class="table table-responsive">
+                <th>Owner</th>
+                <th>Land Size</th>
+                <th>Location</th>
+                <th>Link</th>
+                <th></th>
+                {% for land in lands %}
+                    <tr>
+                        <td>{{ land.user.first_name }}&nbsp;&nbsp;{{ land.user.last_name }}</td>
+                        <td>{{ land.approximate_size }} acres</td>
+                        <td>{{ land.location }}</td>
+                        <td><a href="{% url 'land:land_details' pk=land.pk %}" class="btn btn-success ">More Details</a></td>
+                        <td><a href="#" class="btn btn-success btn-raised">Contact Owner</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <h6>No land available for sale!</h6>
+        {% endif %}
+    </div>
 {% endblock %}
 

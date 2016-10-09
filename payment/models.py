@@ -15,6 +15,7 @@ class Payment(models.Model):
     phone_number = models.CharField(max_length=13)
     payment_mode = models.CharField(max_length=32)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
+    details = models.CharField(max_length=200, default='')
     status = models.CharField(max_length=32)
     transaction_date = models.DateTimeField(auto_now_add=True)
 

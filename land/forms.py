@@ -59,10 +59,20 @@ class RegisterLandForm(forms.Form):
     location = forms.CharField(max_length=128, widget=forms.TextInput(
         attrs={'id': 'location', 'placeholder': 'Enter location)', }
     ))
-
-
+    sale_price = forms.CharField(max_length=128, widget=forms.NumberInput(
+        attrs={'id': 'location', 'placeholder': 'Enter Sale Price Ksh (Optional)', }
+    ), required=False, )
 
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=32)
     password = forms.CharField(max_length=128, widget=forms.PasswordInput)
+
+
+class LandPurchaseForm(forms.Form):
+    phone_number = forms.CharField(max_length=13, widget=forms.TextInput(
+        attrs={'id': 'phone_number', 'placeholder': 'Enter Your Phone Number format(+2547 XXX XXX)'}
+    ))
+    deposit_amount = forms.CharField(max_length=14, widget=forms.NumberInput(
+        attrs={'id': 'deposit_amount', }
+    ), disabled=True, required=True)

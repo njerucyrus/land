@@ -27,6 +27,7 @@ class Land(models.Model):
     location = models.CharField(max_length=128)
     district = models.CharField(max_length=128)
     is_onsale = models.BooleanField(default=True)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     date_updated = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -42,6 +43,19 @@ class LandTransfer(models.Model):
 
     def __unicode__(self):
         return str(self.new_title_deed_no)
+
+
+class Notification(models.Model):
+    sender = models.CharField(max_length=13)
+    text = models.TextField(max_length=200)
+    is_read = models.BooleanField(default=False)
+    date_sent = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'Notifications'
+
+    def __unicode__(self):
+        return "Message From {0}".format(self.sender)
 
 
 

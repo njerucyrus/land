@@ -1,5 +1,10 @@
 from django.contrib import admin
-from land.models import LandUserProfile, Land, LandTransfer
+from land.models import (
+    LandUserProfile,
+    Land,
+    LandTransfer,
+    Notification,
+)
 
 
 # REGISTER ALL MODELS TO ADMIN SITE
@@ -20,6 +25,7 @@ class LandAdmin(admin.ModelAdmin):
                     'location',
                     'district',
                     'is_onsale',
+                    'sale_price',
                     'date_updated'
                     ]
 
@@ -40,3 +46,11 @@ class LandTransferAdmin(admin.ModelAdmin):
     class Meta:
         model = LandTransfer
 admin.site.register(LandTransfer, LandTransferAdmin)
+
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['sender', 'text', 'date_sent', 'is_read']
+
+    class Meta:
+        model = Notification
+admin.site.register(Notification, NotificationAdmin)

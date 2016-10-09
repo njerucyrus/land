@@ -1,0 +1,13 @@
+{% extends  'base.html' %}
+
+
+{% block content %}
+<div style="">
+<p>Owner: {{ land.user.first_name }}</p>
+<p>Location: {{ land.location }}</p>
+<p>District: {{ land.district}}</p>
+<p>Sale Price: {{ land.sale_price}} Ksh</p>
+<p><a href="{% url 'land:buy_land' pk=land.pk %} " class="btn btn-success btn-raised">Send A Buy Request</a> </p>
+
+</div>
+{% endblock %}
