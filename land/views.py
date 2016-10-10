@@ -27,6 +27,10 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from random import randint
 
+
+def index(request):
+    return render(request, 'land/index.html', {})
+
 # create a user account and land profile as well
 
 
@@ -91,9 +95,10 @@ def user_login(request):
                 if user.is_active:
                     request.session['username'] = cd['username']
                     login(request, user)
-                    if next == '':
+
+                    if next_url == '':
                         return HttpResponseRedirect('/')
-                    elif next:
+                    elif next_url:
                         return HttpResponseRedirect(next_url)
             else:
 
@@ -175,7 +180,6 @@ def land_detail(request, pk=None):
     return render(request, 'land/land_details.html', {'land': land, })
 
 
-
 @transaction.atomic()
 def buy_land(request, pk=None):
     land = get_object_or_404(Land, pk=pk)
@@ -204,11 +208,14 @@ def buy_land(request, pk=None):
             details = "Land Purchase Deposit 0f Ksh {0} For Land On-sale by {1}  {2}".format(
                 deposit, land.user.first_name, land.user.last_name
             )
+            id_prefix = "HTech"
             transaction_id = randint(range_start, range_end)
             id_hash = SHA256.new(str(transaction_id)).hexdigest()
+            t_id = id_prefix+id_hash
             # create a payment model instance here
+
             payment = Payment.objects.create(
-                transaction_id=id_hash,
+                transaction_id=t_id,
                 phone_number=buyer_phone_number,
                 payment_mode="M-Pesa",
                 amount=amount,
@@ -220,6 +227,7 @@ def buy_land(request, pk=None):
             land.is_onsale = False
             land.save()
             # create a notification
+            receiver = land.profile.phone_number
             notification_message = "Dear {0} {1} we are gland to inform you that  " \
                                    "{2}  Has Place a deposit of Ksh {3} " \
                                    "for the land you posted on-sale Contact this client on" \
@@ -230,6 +238,7 @@ def buy_land(request, pk=None):
                                                     buyer_phone_number)
             notification = Notification.objects.create(
                 sender=buyer_phone_number,
+                sent_to=receiver,
                 text=notification_message
             )
             notification.save()
@@ -241,3 +250,18 @@ def buy_land(request, pk=None):
         'land_purchase_form': land_purchase_form,
     })
 
+
+@login_required(login_url='/login/')
+def get_notification(request):
+    username = request.user
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(LandUserProfile, user=user)
+    receiver = profile.phone_number
+    notification = Notification.objects.filter(sent_to=receiver, is_read=False)
+    all_notf = Notification.objects.filter(sent_to=receiver,)
+
+    return render(request, 'land/notification.html',
+                              {
+                                  'notification': notification,
+                                  'all': all_notf,
+                              })

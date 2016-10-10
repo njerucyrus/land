@@ -21,6 +21,7 @@ class LandUserProfile(models.Model):
 
 class Land(models.Model):
     user = models.ForeignKey(User, verbose_name="Land Owner")
+    profile = models.ForeignKey(LandUserProfile, )
     title_deed_no = models.CharField(max_length=32, unique=True)
     registry_map_sheet_no = models.CharField(max_length=32, unique=True)
     approximate_size = models.DecimalField(max_digits=10, decimal_places=2)
@@ -47,6 +48,7 @@ class LandTransfer(models.Model):
 
 class Notification(models.Model):
     sender = models.CharField(max_length=13)
+    sent_to = models.CharField(max_length=13, default='')
     text = models.TextField(max_length=200)
     is_read = models.BooleanField(default=False)
     date_sent = models.DateTimeField(auto_now_add=True)

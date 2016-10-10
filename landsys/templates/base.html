@@ -50,11 +50,11 @@
     </style>
 </head>
 <body class="custom">
-<div class="jumbotron">
-    <div class="container text-center">
-        <h1>Nyeri Land Admistration System  </h1>
-    </div>
-</div>
+{#<div class="jumbotron">#}
+{#    <div class="container text-center">#}
+{#        <h1>Nyeri Land Admistration System  </h1>#}
+{#    </div>#}
+{#</div>#}
 
 
 <nav class="navbar navbar-success">
@@ -72,10 +72,10 @@
             <ul class="nav navbar-nav">
 
                 <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">Link 1</a></li>
-                <li><a href="#">Link 2</a></li>
-                <li><a href="#">Link 3</a></li>
-                <li><a href="#">Link 4</a></li>
+                <li><a href="{% url 'land:register_land' %}">Register Land </a></li>
+                <li><a href="{% url 'land:display_lands' %}">Lands On Sale</a></li>
+                <li><a href="#">Transfer Ownership</a></li>
+
                 {% if user.is_authenticated %}
                 {% else %}
                 <li><a href="#">Create Account</a></li>
@@ -88,6 +88,9 @@
 
                         {{ request.user }}
                     <li><a href="{% url 'land:logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+
+                    <li><a href="{% url 'land:notification' %}"><span class=""></span> Notifications</a></li>
+
                     {% else %}
                     <li><a href="{% url 'land:login' %}"><span class="glyphicon glyphicon-log-out"></span> Login</a></li>
 

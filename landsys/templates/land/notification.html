@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block notification %}
+<div>
+<ul>
+    {% for note in notification %}
+
+
+    {% endfor %}
+
+</ul>
+</div>
+{% endblock %}
+
+{% block content %}
+  <ul>
+ {% for n in all %}
+     <li>Message From {{ n.sender }}
+         <br><br>
+     <p>{{ n.text }}</p>
+     </li>
+
+ {% endfor %}
+ </ul>
+{% endblock %}

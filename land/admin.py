@@ -49,7 +49,7 @@ admin.site.register(LandTransfer, LandTransferAdmin)
 
 
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ['sender', 'text', 'date_sent', 'is_read']
+    list_display = ['sender', 'sent_to', 'text', 'date_sent', 'is_read']
 
     class Meta:
         model = Notification
