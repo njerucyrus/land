@@ -42,6 +42,7 @@ class LandSales(models.Model):
     buyer = models.CharField(max_length=32, )
     deposit_amount = models.DecimalField(max_digits=10, decimal_places=2)
     uncleared_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transfer_made = models.BooleanField(default=False, )
     date_deposited = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
