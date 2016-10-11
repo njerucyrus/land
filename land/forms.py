@@ -76,3 +76,12 @@ class LandPurchaseForm(forms.Form):
     deposit_amount = forms.CharField(max_length=14, widget=forms.NumberInput(
         attrs={'id': 'deposit_amount', }
     ), disabled=True, required=True)
+
+
+class TransFerLandPaymentForm(forms.Form):
+    phone_number = forms.CharField(max_length=13, widget=forms.TextInput(
+        attrs={'id': 'phone_number', 'placeholder': 'Enter Your Phone Number format(+2547 XXX XXX)'}
+    ))
+    amount = forms.CharField(max_length=14, widget=forms.NumberInput(
+        attrs={'id': 'amount', }
+    ), disabled=True, required=True)
