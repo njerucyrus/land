@@ -1,21 +1,30 @@
 {% extends 'base.html' %}
 {% if lands_bought %}
     {% block content %}
-        <div class="col col-md-6">
+        <div class="col col-md-12">
             <table class="table table-responsive">
                 <tr>
                     <td>Title Deed</td>
                     <td>Land Size</td>
-                    <td>Price (Ksh)</td>
-                    <td>Price (Ksh)</td>
+                    <td>Amount Deposited</td>
+                    <td>Deposited By(Fullname)</td>
+                    <td>Deposited By (Account Name)</td>
+                    <td>Date Deposited(Ksh)</td>
+                    <td>Uncleared amount(Ksh)</td>
+                    <td>Land Price (Ksh)</td>
                     <td>Change Ownership</td>
                 </tr>
                 <tr>
                     {% for land in lands_bought %}
-                        <td>{{ land.title_deed_no }}</td>
-                        <td>{{ land.approximate_size }}</td>
-                        <td>{{ land.sale_price }}</td>
-                        <td><a href="#">Change ownership</a></td>
+                        <td>{{ land.land.title_deed_no }}</td>
+                        <td>{{ land.land.approximate_size }}</td>
+                        <td>{{ land.deposit_amount }}</td>
+                        <td>{{ profile.user.first_name }}&nbsp;{{ profile.user.last_name }}</td>
+                        <td>{{ profile.user.username }}</td>
+                        <td>{{ land.date_deposited }}</td>
+                        <td>{{ land.uncleared_amount }}</td>
+                        <td>{{ land.land.sale_price }}</td>
+                        <td><a href="{% url 'land:transfer_land' pk=land.pk %}">Change ownership</a></td>
                     {% endfor %}
                 </tr>
             </table>

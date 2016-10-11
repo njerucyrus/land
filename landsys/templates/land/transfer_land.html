@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content">
+<div>
+
+    <leged><strong>Land Transfer Information</strong></leged>
+    <p>Transfer Land To (Buyer Account Name):<strong> {{ user.username }}</strong></p>
+    <p>Buyer Fullname: <strong>{{ user.first_name  }}&nbsp;{{ user.last_name }}</strong></p>
+    <p>This client has paid a deposit of <strong>(3/4)</strong> of total land sale of <strong>Ksh {{ land.deposit_amount }}</strong></p>
+    <p>The uncleared amount is Ksh <strike><strong>{{ land.uncleared_amount }}</strong></strike></p>
+    <p>Land Title Deed Number: {{ land.land.title_deed_no }}</p>
+
+    <button class="btn btn-danger btn-raised">
+        Continue to LandTransfer Ownership
+    </button>
+
+</div>
+</div>
+
+{% endblock %}
