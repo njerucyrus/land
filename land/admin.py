@@ -18,16 +18,18 @@ admin.site.register(LandUserProfile, LandUserProfileAdmin)
 
 
 class LandAdmin(admin.ModelAdmin):
-    list_display = ['user',
-                    'title_deed_no',
-                    'registry_map_sheet_no',
-                    'approximate_size',
-                    'location',
-                    'district',
-                    'is_onsale',
-                    'sale_price',
-                    'date_updated'
-                    ]
+    list_display = [
+        'user',
+        'title_deed_no',
+        'registry_map_sheet_no',
+        'approximate_size',
+        'location',
+        'district',
+        'is_onsale',
+        'bought',
+        'sale_price',
+        'date_updated'
+    ]
 
     class Meta:
         model = Land

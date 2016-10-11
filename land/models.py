@@ -28,6 +28,7 @@ class Land(models.Model):
     location = models.CharField(max_length=128)
     district = models.CharField(max_length=128)
     is_onsale = models.BooleanField(default=True)
+    bought = models.BooleanField(default=False)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     date_updated = models.DateTimeField(auto_now_add=True)
 
@@ -46,11 +47,27 @@ class LandTransfer(models.Model):
         return str(self.new_title_deed_no)
 
 
+class LandTransferHistoryLog(models.Model):
+    transfer_from = models.CharField(max_length=128, )
+    transfer_to = models.CharField(max_length=128, )
+    initial_title_deed = models.CharField(max_length=128, )
+    initial_map_sheet = models.CharField(max_length=128, )
+    new_map_sheet = models.CharField(max_length=128, )
+    initial_title_deed = models.CharField(max_length=128, )
+    new_title_deed = models.CharField(max_length=128, )
+    date_transferred = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        self.initial_title_deed
+
+
 class Notification(models.Model):
     sender = models.CharField(max_length=13)
+    land_id = models.ForeignKey(Land, on_delete=models.DO_NOTHING)
     sent_to = models.CharField(max_length=13, default='')
     text = models.TextField(max_length=200)
     is_read = models.BooleanField(default=False)
+    responded = models.BooleanField(default=False)
     date_sent = models.DateTimeField(auto_now_add=True)
 
     class Meta:

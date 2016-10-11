@@ -11,14 +11,16 @@ admin.site.register(LandTransferFee, LandTransferFeeAdmin)
 
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ['transaction_id',
-                    'phone_number',
-                    'amount',
-                    'payment_mode',
-                    'status',
-                    'details',
-                    'transaction_date'
-                    ]
+    list_display = [
+        'user',
+        'transaction_id',
+        'phone_number',
+        'amount',
+        'payment_mode',
+        'status',
+        'details',
+        'transaction_date'
+    ]
 
     class Meta:
         model = Payment

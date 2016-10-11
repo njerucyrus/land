@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class LandTransferFee(models.Model):
@@ -11,6 +12,7 @@ class LandTransferFee(models.Model):
 
 
 class Payment(models.Model):
+    user = models.ForeignKey(User, )
     transaction_id = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=13)
     payment_mode = models.CharField(max_length=32)

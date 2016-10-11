@@ -142,8 +142,10 @@ def register_land(request):
             # create user model instance to link to the actual land owner
             username = request.session.get('username')
             land_owner = get_object_or_404(User, username=username)
+            profile = get_object_or_404(LandUserProfile, user=land_owner)
             land = Land.objects.create(
                 user=land_owner,
+                profile=profile,
                 title_deed_no=title_deed,
                 registry_map_sheet_no=registry_map_sheet_no,
                 approximate_size=approximate_size,
@@ -213,8 +215,9 @@ def buy_land(request, pk=None):
             id_hash = SHA256.new(str(transaction_id)).hexdigest()
             t_id = id_prefix+id_hash
             # create a payment model instance here
-
+            user = get_object_or_404(User, username=str(request.user),)
             payment = Payment.objects.create(
+                user=user,
                 transaction_id=t_id,
                 phone_number=buyer_phone_number,
                 payment_mode="M-Pesa",
@@ -225,6 +228,7 @@ def buy_land(request, pk=None):
             payment.save()
             # make land not on sale
             land.is_onsale = False
+            land.bought = True
             land.save()
             # create a notification
             receiver = land.profile.phone_number
@@ -237,6 +241,7 @@ def buy_land(request, pk=None):
                                                     deposit,
                                                     buyer_phone_number)
             notification = Notification.objects.create(
+                land_id=land,
                 sender=buyer_phone_number,
                 sent_to=receiver,
                 text=notification_message
@@ -249,6 +254,21 @@ def buy_land(request, pk=None):
     return render(request, 'land/deposit_payment.html', {
         'land_purchase_form': land_purchase_form,
     })
+
+
+@login_required(login_url='/login/')
+def show_bought_land(request):
+    username = str(request.user)
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(LandUserProfile, user=user)
+    phone_number = profile.phone_number
+    notification = Notification.objects.filter(sent_to=phone_number)
+
+    for n in notification:
+        land_id = n.land_id.id
+    lands_bought = Land.objects.filter(id=land_id)
+   
+    return render(request, 'land/lands_bought.html', {'lands_bought': lands_bought})
 
 
 @login_required(login_url='/login/')
