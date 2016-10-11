@@ -36,6 +36,18 @@ class Land(models.Model):
         return self.title_deed_no
 
 
+class LandSales(models.Model):
+    land = models.ForeignKey(Land, )
+    owner = models.CharField(max_length=32, )
+    buyer = models.CharField(max_length=32, )
+    deposit_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    uncleared_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date_deposited = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.land.title_deed_no)
+
+
 class LandTransfer(models.Model):
     owner = models.ForeignKey(User, verbose_name="Owner", related_name="LandOwner")
     new_owner = models.ForeignKey(User, verbose_name="New Owner")

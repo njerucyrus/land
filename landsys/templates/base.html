@@ -56,7 +56,6 @@
 {#    </div>#}
 {#</div>#}
 
-
 <nav class="navbar navbar-success">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -83,7 +82,8 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'land:notification' %}"><span class=""></span> Notifications</a></li>
+
+                        <li><a href="{% url 'land:notification' %}"><span class="glyphicon glyphicon-globe"></span> Notifications</a></li>
 
                         <li><a href="#"><span class="glyphicon glyphicon-user"></span>
                         {{ request.user }}
