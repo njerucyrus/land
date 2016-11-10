@@ -7,33 +7,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- my local css and bootstrap -->
     <link href="{% static 'css/bootstrap.min.css' %} " rel="stylesheet">
-{#    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>#}
-     <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'js/jquery.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %} "></script>
-    <!-- jQuery -->
+    {#    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>#}
 
-     {#    css for material#}
+    {#    css for material#}
     <link href="{% static 'material/css/bootstrap-material-design.css' %}" rel="stylesheet">
     <link href="{% static 'material/css/ripples.min.css' %}" rel="stylesheet">
     <!-- slider css -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.bxslider.css' %}">
     <!--end of slider css -->
 
-    
+
     <!--end of my local -->
 
 
-{#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>#}
-{#    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>#}
+    {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>#}
+    {#    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>#}
     <style type="text/css">
         /* Remove the navbar's default rounded borders and increase the bottom margin */
         .navbar {
             margin-bottom: 50px;
             border-radius: 0;
         }
+
         .custom {
-            background: #ffffff !important;
+            background-color: #ffffff;
+            background-repeat: no-repeat;
+            background-color: transparent;
         }
 
         /* Remove the jumbotron's default bottom margin */
@@ -44,7 +43,7 @@
 
         /* Add a gray background color and some padding to the footer */
         footer {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2!important;
             padding: 25px;
         }
     </style>
@@ -70,44 +69,104 @@
 
             <ul class="nav navbar-nav">
 
-                <li class="active"><a href="#">Home</a></li>
+                <li class="active"><a href="{% url 'land:index' %}">Home</a></li>
                 <li><a href="{% url 'land:register_land' %}">Register Land </a></li>
                 <li><a href="{% url 'land:display_lands' %}">Lands On Sale</a></li>
-                <li><a href="{% url 'land:lands_bought' %}">Transfer Ownership</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Services
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">Nyeri Land Services</li>
+                        <li><a href="{% url 'land:my_land' %}"> Transfer Land Ownership</a></li>
+
+
+                    </ul>
+                </li>
 
                 {% if user.is_authenticated %}
                 {% else %}
-                <li><a href="#">Create Account</a></li>
-                {%endif %}
+                    <li><a href="{% url 'land:create_account' %}">Create Account</a></li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                    {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Profile
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-header">Profile</li>
+                            <li><a href="{% url 'land:lands_bought' %}">Lands Bought</a></li>
+                            <li><a href="{% url 'land:my_land' %}"> My Lands</a></li>
 
-                        <li><a href="{% url 'land:notification' %}"><span class="glyphicon glyphicon-globe"></span> Notifications</a></li>
+                        </ul>
+                    </li>
 
-                        <li><a href="#"><span class="glyphicon glyphicon-user"></span>
-                        {{ request.user }}
-                    <li><a href="{% url 'land:logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-                    {% else %}
-                    <li><a href="{% url 'land:login' %}"><span class="glyphicon glyphicon-log-out"></span> Login</a></li>
+                    <li><a href="{% url 'land:notification' %}"><span class="glyphicon glyphicon-globe"></span>
+                        Notifications</a></li>
 
-                    {% endif %}</a></li>
-                
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span>
+                    {{ request.user }}
+                    <li><a href="{% url 'land:logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'land:login' %}"><span class="glyphicon glyphicon-log-out"></span> Login</a>
+                    </li>
+
+                {% endif %}</a></li>
+
             </ul>
         </div>
     </div>
 </nav>
 
 
-<div class="container">
-<div class="content">
-    {% block content %}
 
-    {% endblock %}
-</div>
-</div>
+    <div class="row">
+        {% block left-side-bar %}
+            <div class="col col-md-3">
+
+            <div class="panel panel-success">
+            <div class="panel-heading">
+              <li>Menu</li>
+
+            </div>
+            <div class="panel-body" style="height: 1020px!important;">
+                <ul>
+
+               <li><a href="{% url 'land:register_land' %}">Register Land</a></li>
+               <li><a href="{% url 'land:my_land' %}">My Lands</a></li>
+               <li><a href="{% url 'land:display_lands' %}">Purchase Land</a></li>
+               <li><a href="{% url 'land:notification' %}">My Account Notifications</a></li>
+
+
+
+                 </ul>
+
+            </div>
+            <div class="panel-footer">
+
+            </div>
+             </div>
+
+
+            </div>
+        {% endblock %}
+        <div class="content">
+        <div class="col col-md-6">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+        </div>
+        {% block right-side-bar %}
+            <div class="col col-md-3">
+                <!--my right content here-->
+            </div>
+        {% endblock %}
+
+    </div>
 <footer class="container-fluid text-center">
-Nyeri Land Administration Copyright &copy;2016
+    Nyeri Land Administration Copyright &copy;2016
 </footer>
 <!-- Bootstrap Core JavaScript -->
 <script src="{% static 'js/jquery.js' %}"></script>

@@ -2,8 +2,9 @@ from django.contrib import admin
 from land.models import (
     LandUserProfile,
     Land,
-    LandTransfer,
+    ChangeLandOwnership,
     Notification,
+    LandTransfer,
 )
 
 
@@ -19,6 +20,7 @@ admin.site.register(LandUserProfile, LandUserProfileAdmin)
 
 class LandAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'user',
         'title_deed_no',
         'registry_map_sheet_no',
@@ -27,6 +29,8 @@ class LandAdmin(admin.ModelAdmin):
         'district',
         'is_onsale',
         'bought',
+        'transferred_completely',
+        'remaining_size',
         'sale_price',
         'date_updated'
     ]
@@ -36,7 +40,7 @@ class LandAdmin(admin.ModelAdmin):
 admin.site.register(Land, LandAdmin)
 
 
-class LandTransferAdmin(admin.ModelAdmin):
+class ChangeLandOwnershipAdmin(admin.ModelAdmin):
     list_display = [
         'owner',
         'new_owner',
@@ -44,6 +48,25 @@ class LandTransferAdmin(admin.ModelAdmin):
         'new_title_deed_no',
         'transfer_size'
     ]
+
+    class Meta:
+        model = ChangeLandOwnership
+admin.site.register(ChangeLandOwnership, ChangeLandOwnershipAdmin)
+
+
+class LandTransferAdmin(admin.ModelAdmin):
+    list_display = ['first_name',
+                    'middle_name',
+                    'last_name',
+                    'id_no',
+                    'district',
+                    'location',
+                    'sub_location',
+                    'transfer_from',
+                    'transfer_size',
+                    'title_deed',
+                    'date'
+                    ]
 
     class Meta:
         model = LandTransfer

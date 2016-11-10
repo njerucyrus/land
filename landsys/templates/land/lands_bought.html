@@ -2,6 +2,7 @@
 {% if lands_bought %}
     {% block content %}
         <div class="col col-md-12">
+        {% if land %}
             <table class="table table-responsive">
                 <tr>
                     <td>Title Deed</td>
@@ -28,6 +29,16 @@
                     {% endfor %}
                 </tr>
             </table>
+        {% else %}
+
+            <div class="alert alert-info" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4></h4><strong>No lands bought yet.!</strong></div>
+              </div>
+
+        {% endif %}
         </div>
     {% endblock %}
 {% else %}

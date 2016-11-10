@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
-
 {% block content %}
 <div class="col col-md-12">
 <form action="" method="post">
-    {{ land_form | crispy }}
+    {{ payment_form }}
     {% csrf_token %}
-    <input type="submit" value="Register Land" class="btn  btn-success btn-raised">
+    <input type="submit" value="Submit Payment" class="btn btn-success btn-raised">
 </form>
 </div>
-
 {% endblock %}

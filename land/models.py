@@ -29,6 +29,8 @@ class Land(models.Model):
     district = models.CharField(max_length=128)
     is_onsale = models.BooleanField(default=True)
     bought = models.BooleanField(default=False)
+    transferred_completely = models.BooleanField(default=False)
+    remaining_size = models.FloatField(default=0.0)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     date_updated = models.DateTimeField(auto_now_add=True)
 
@@ -49,15 +51,33 @@ class LandSales(models.Model):
         return str(self.land.title_deed_no)
 
 
-class LandTransfer(models.Model):
+class ChangeLandOwnership(models.Model):
     owner = models.ForeignKey(User, verbose_name="Owner", related_name="LandOwner")
     new_owner = models.ForeignKey(User, verbose_name="New Owner")
-    old_title_deed_no = models.OneToOneField(Land, )
+    old_title_deed_no = models.CharField(max_length=32, )
     new_title_deed_no = models.CharField(max_length=32)
     transfer_size = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __unicode__(self):
         return str(self.new_title_deed_no)
+
+
+class LandTransfer(models.Model):
+    first_name = models.CharField(max_length=128, )
+    middle_name = models.CharField(max_length=128, )
+    last_name = models.CharField(max_length=128, )
+    id_no = models.CharField(max_length=20, )
+    district = models.CharField(max_length=128, )
+    location = models.CharField(max_length=128, )
+    sub_location = models.CharField(max_length=128, )
+    transfer_from = models.CharField(max_length=128, )
+    map_sheet = models.CharField(max_length=128, )
+    transfer_size = models.FloatField()
+    title_deed = models.CharField(max_length=64, )
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.title_deed)
 
 
 class LandTransferHistoryLog(models.Model):
@@ -66,12 +86,11 @@ class LandTransferHistoryLog(models.Model):
     initial_title_deed = models.CharField(max_length=128, )
     initial_map_sheet = models.CharField(max_length=128, )
     new_map_sheet = models.CharField(max_length=128, )
-    initial_title_deed = models.CharField(max_length=128, )
     new_title_deed = models.CharField(max_length=128, )
     date_transferred = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        self.initial_title_deed
+        return self.initial_title_deed
 
 
 class Notification(models.Model):
@@ -88,6 +107,12 @@ class Notification(models.Model):
 
     def __unicode__(self):
         return "Message From {0}".format(self.sender)
+
+
+
+
+
+
 
 
 

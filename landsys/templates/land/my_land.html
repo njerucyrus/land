@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <table class="table table-responsive">
+    {% if lands  %}
+    <tr>
+        <th>Title Deed</th>
+        <th>Map sheet Number</th>
+        <th>Located At</th>
+        <th>Link</th>
+    </tr>
+    {% for land in lands %}
+        <tr>
+            <td>{{ land.title_deed_no }}</td>
+            <td>{{ land.registry_map_sheet_no }}</td>
+            <td>{{ land.district }}</td>
+            <td><a href="{% url 'land:transfer' land_id=land.id %}" class="btn btn-success btn-raised">Transfer Ownership</a> </td>
+        </tr>
+
+    {% endfor %}
+    </table>
+    {% else %}
+        <h6>You do not have any land registered with our system to register <a href="{% url 'land:register_land' %}"> click here</a></h6>
+    {% endif %}
+
+{% endblock %}

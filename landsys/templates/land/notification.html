@@ -15,10 +15,13 @@
 {% block content %}
   <ul>
  {% for n in all %}
+     <div class="alert alert-primary" role="alert">
+     {{ forloop.counter }}
      <li>Message From {{ n.sender }}
          <br><br>
      <p>{{ n.text }}</p>
      </li>
+     </div>
 
  {% endfor %}
  </ul>

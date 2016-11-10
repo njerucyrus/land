@@ -5,12 +5,13 @@
 <div>
 <form action=""  method="POST">
        <fieldset>
-            <legend>User Account Details</legend>
-            {{ user_form | crispy }}
-        </fieldset>
-        <fieldset>
             <legend>Profile Details</legend>
             {{ profile_form |crispy }}
+        </fieldset>
+        <fieldset>
+            <legend>User Account Details</legend>
+
+             {{ user_form | crispy }}
         </fieldset>
 {% csrf_token %}
 <input type="submit" value="Submit" class="btn btn-success btn-raised">

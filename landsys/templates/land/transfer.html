@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content">
+<div class="container">
+    <div class="row">
+        <div class="col col-md-6">
+            <form method="post" action="">
+                {% csrf_token %}
+                <fieldset class="field-box">
+                    <legend class="field-box">Personal Details</legend>
+                    {{ form | crispy }}
+                    <input type="submit" value="Continue" class="btn btn-success btn-raised">
+                </fieldset>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
