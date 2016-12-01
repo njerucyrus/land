@@ -32,7 +32,9 @@ class Land(models.Model):
     transferred_completely = models.BooleanField(default=False)
     remaining_size = models.FloatField(default=0.0)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
     date_updated = models.DateTimeField(auto_now_add=True)
+
 
     def __unicode__(self):
         return self.title_deed_no
@@ -45,6 +47,7 @@ class LandSales(models.Model):
     deposit_amount = models.DecimalField(max_digits=10, decimal_places=2)
     uncleared_amount = models.DecimalField(max_digits=10, decimal_places=2)
     transfer_made = models.BooleanField(default=False, )
+    fee_paid = models.BooleanField(default=False)
     date_deposited = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -73,7 +76,8 @@ class LandTransfer(models.Model):
     transfer_from = models.CharField(max_length=128, )
     map_sheet = models.CharField(max_length=128, )
     transfer_size = models.FloatField()
-    title_deed = models.CharField(max_length=64, )
+    old_title_deed = models.CharField(max_length=128)
+    title_deed = models.CharField(max_length=128, )
     date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

@@ -79,6 +79,7 @@ class LandPurchaseForm(forms.Form):
 
 
 class TransFerLandPaymentForm(forms.Form):
+    title_deed = forms.CharField(max_length=32, disabled=True)
     phone_number = forms.CharField(max_length=13, widget=forms.TextInput(
         attrs={'id': 'phone_number_id', 'placeholder': 'Enter Your Phone Number format(+2547 XXX XXX)'}
     ))

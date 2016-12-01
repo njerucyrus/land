@@ -19,6 +19,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('land.urls', namespace='land'), ),
+    url(r'^api/', include('payment.urls', namespace='api'), ),
 
 
 ]

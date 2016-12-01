@@ -143,3 +143,15 @@ AT_SENDER = "20880"
 AT_USERNAME = 'njerucyrus'
 
 AT_API_KEY = '4649d2e10c136b7d06f70b0f623f9457b5b44a8f761a9602d2eb83fadd49dabc'
+
+
+sandbox_apiKey = '1fe5c87f52e9581dfe155c12a61fa106aea53bb9265386aed27e6525a5595646'
+
+
+sandbox_username = 'tonnychopper'
+
+sandbox_productName = 'LAND_TRANSFER'
+
+sandbox_currencyCode = "KES"
+
+sandbox_metadata = {"agentId": "6544", "Company": "NYERI LANDSYS"}

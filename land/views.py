@@ -16,6 +16,7 @@ from land.forms import (
     LandPurchaseForm,
     LandTransferForm,
     ConfirmCodeForm,
+    TransFerLandPaymentForm,
 )
 from land.models import (
     LandUserProfile,
@@ -42,10 +43,18 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from random import randint
 from django.conf import settings
+from landsys.settings import (
+    sandbox_apiKey,
+    sandbox_username,
+    sandbox_metadata,
+    sandbox_currencyCode,
+    sandbox_productName,
+)
 
 
 def index(request):
     return render(request, 'land/index.html', {})
+
 
 # create a user account and land profile as well
 
@@ -232,7 +241,7 @@ def buy_land(request, pk=None):
             id_prefix = "HTech"
             transaction_id = randint(range_start, range_end)
             id_hash = SHA256.new(str(transaction_id)).hexdigest()
-            t_id = id_prefix+id_hash
+            t_id = id_prefix + id_hash
             # create a payment model instance here
             username = str(request.user)
             user = get_object_or_404(User, username=username)
@@ -240,7 +249,7 @@ def buy_land(request, pk=None):
                 user=user,
                 transaction_id=t_id,
                 phone_number=buyer_phone_number,
-                payment_mode="M-Pesa",
+                payment_mode="Bank",
                 amount=amount,
                 details=details,
                 status="Success"
@@ -268,10 +277,10 @@ def buy_land(request, pk=None):
                                    "{2}  Has Place a deposit of Ksh {3} " \
                                    "for the land you posted on-sale Contact this client on" \
                                    " {4} ".format(land.user.first_name,
-                                                    land.user.last_name,
-                                                    request.user,
-                                                    deposit,
-                                                    buyer_phone_number)
+                                                  land.user.last_name,
+                                                  request.user,
+                                                  deposit,
+                                                  buyer_phone_number)
             notification = Notification.objects.create(
                 land_id=land,
                 sender=buyer_phone_number,
@@ -300,13 +309,13 @@ def show_bought_land(request):
                       'profile': profile,
                   })
 
+
 # pay land transfer fee
-
-
+#remove the pk soon wen you are done for logic to work
 def pay_land_transfer_fee(request, pk=None):
     land = get_object_or_404(Land, pk=pk)
     size = float(land.approximate_size)
-    fee = get_object_or_404(LandTransferFee,)
+    fee = get_object_or_404(LandTransferFee, )
     fee_amt = fee.fee_amount
     amount = fee_amt * size
     initial = {'amount': amount, }
@@ -316,79 +325,91 @@ def pay_land_transfer_fee(request, pk=None):
         if payment_form.is_valid():
             # get the data submitted from the data
             cd = payment_form.cleaned_data
-            phone_number = cd['phone_number']
+            phoneNumber = cd['phone_number']
             amount = cd['amount']
 
-            range_start = 10 ** (10 - 1)
-            range_end = (10 ** 10) - 1
-            transaction_id = randint(range_start, range_end)
-            id_prefix = "HTech"
-            id_hash = SHA256.new(str(transaction_id)).hexdigest()
-            t_id = id_prefix+id_hash
-            user = get_object_or_404(User, username=str(request.user))
-            payment_detail = "Payment for land transfer TitleDeedNo {0}".format(
-                land.title_deed_no
-            )
-            # create fee payment object
-            payment = LandTransferFee.objects.create(
-                user=user,
-                transaction_id=t_id,
-                land=land,
-                amount=amount,
-                phone_number=phone_number,
-                payment_mode="M-Pesa",
-                details=payment_detail,
-                status="success",
-            )
-            payment.save()
-            return HttpResponse('payment done successfully.')
+            productName = str(settings.sandbox_productName)
+            currencyCode = str(settings.sandbox_currencyCode)
+            username = str(settings.sandbox_username)
+            apiKey = str(settings.sandbox_apiKey)
+            metadata = str(settings.sandbox_metadata)
+            try:
+                gateway = AfricasTalkingGateway(username, apiKey, "sandbox")
+                transactionId = gateway.initiateMobilePaymentCheckout(
+                    productName,
+                    phoneNumber,
+                    currencyCode,
+                    amount,
+                    metadata
+                )
+
+
+                # range_start = 10 ** (10 - 1)
+                # range_end = (10 ** 10) - 1
+                # transaction_id = randint(range_start, range_end)
+                # id_prefix = "HTech"
+                # id_hash = SHA256.new(str(transaction_id)).hexdigest()
+                # t_id = id_prefix+id_hash
+                user = get_object_or_404(User, username=str(request.user))
+                payment_detail = "Payment for land transfer TitleDeedNo {0}".format(
+                    land.title_deed_no
+                )
+                # create fee payment object
+                payment = LandTransFerFeePayment.objects.create(
+                    user=user,
+                    transaction_id=transactionId,
+                    land=land,
+                    amount=amount,
+                    phone_number=phoneNumber,
+                    payment_mode="Mpesa",
+                    details=payment_detail,
+                    status="Pending Confirmation",
+                )
+                payment.save()
+                return HttpResponse('Payment initiated successfully Kindly Check your phone to complete the payment')
+
+            except Exception, e:
+                return HttpResponse('error occured {0}'.format(str(e)))
     else:
         payment_form = LandTransFerFeeForm(initial=initial)
     return render(request, 'land/transfer_payment.html', {'payment_form': payment_form, })
 
 
 def transfer_bought_land(request, pk=None):
-    land = get_object_or_404(LandSales, pk=pk)
+    land = get_object_or_404(LandSales, id=pk)
     buyer_user = land.buyer
     user = get_object_or_404(User, username=buyer_user)
-    # check if transfer fee has been paid
-    l_query = get_object_or_404(Land, pk=land.pk)
-    payment = get_object_or_404(LandTransFerFeePayment, user=user, land=l_query)
-    payment_status = payment.status.lower()
-    if payment_status == 'success':
-        #payment was successful now we can transfer land ownership
-        owner = get_object_or_404(User, username=str(request.user))
-        transfer_size = land.land.approximate_size
-        old_title_deed = land.land.title_deed_no
-        range_start = 10 ** (8 - 1)
-        range_end = (10 ** 8) - 1
-        new_title_deed = randint(range_start, range_end)
-        new_mapsheet = randint(range_start, range_end)
-        land_transfer = ChangeLandOwnership.objects.create(
-            owner=owner,
-            new_owner=user,
-            old_title_deed_no=old_title_deed,
-            new_title_deed_no=new_title_deed,
-            transfer_size=transfer_size
-        )
-        land_transfer.save()
-        initial_map_sheet = land.land.registry_map_sheet_no
-        transfer_log = LandTransferHistoryLog.objects.create(
-            transfer_from=str(request.user),
-            transfer_to=user.username,
-            initial_title_deed=old_title_deed,
-            initial_map_sheet=initial_map_sheet,
-            new_map_sheet=new_mapsheet,
-            new_title_deed=new_title_deed
-        )
-        transfer_log.save()
+    owner = get_object_or_404(User, username=str(request.user))
+    transfer_size = land.land.approximate_size
+    old_title_deed = land.land.title_deed_no
+    range_start = 10 ** (8 - 1)
+    range_end = (10 ** 8) - 1
+    new_title_deed = randint(range_start, range_end)
+    new_mapsheet = randint(range_start, range_end)
+    land_transfer = ChangeLandOwnership.objects.create(
+        owner=owner,
+        new_owner=user,
+        old_title_deed_no=old_title_deed,
+        new_title_deed_no=new_title_deed,
+        transfer_size=transfer_size
+    )
+    land_transfer.save()
+    initial_map_sheet = land.land.registry_map_sheet_no
+    transfer_log = LandTransferHistoryLog.objects.create(
+        transfer_from=str(request.user),
+        transfer_to=user.username,
+        initial_title_deed=old_title_deed,
+        initial_map_sheet=initial_map_sheet,
+        new_map_sheet=new_mapsheet,
+        new_title_deed=new_title_deed
+    )
+    transfer_log.save()
+    message = "Transfer Made Succuessfully"
 
-    else:
-        return HttpResponseRedirect('/transfer-payment/')
-
-    return render(request, 'land/transfer_land.html', {'land': land, 'user': user, })
+    return render(request, 'land/transfer_land.html', {'land': land, 'user': user, 'message':message })
 
 
+@login_required(login_url='/login/')
 def my_land(request):
     user = get_object_or_404(User, username=str(request.user))
     land = Land.objects.filter(user=user, transferred_completely=False)
@@ -400,11 +421,18 @@ def transfer_land(request, land_id=None):
     land = get_object_or_404(Land, id=land_id)
     # get the details of the land you for transfer
     land_size = land.remaining_size
+    old_title_deed = land.title_deed_no
+
     initial = {'land_size': land_size, 'transfer_from': str(request.user), }
+    charge_fee = LandTransferFee.objects.values_list('fee_amount', flat=True)[0]
+
+
+    fee_form_initial = {'title_deed': old_title_deed, 'amount': charge_fee}
     if request.method == 'POST':
         data = request.POST.copy()
         form = LandTransferForm(data, initial=initial)
-        if form.is_valid():
+        transfer_fee_form = TransFerLandPaymentForm(request.POST, initial=fee_form_initial)
+        if form.is_valid() and transfer_fee_form.is_valid():
             cd = form.cleaned_data
             first_name = cd['first_name']
             middle_name = cd['middle_name']
@@ -418,8 +446,8 @@ def transfer_land(request, land_id=None):
 
             range_start = 10 ** (10 - 1)
             range_end = (10 ** 10) - 1
-            map_sheet = "mpsh"+str(randint(range_start, range_end))
-            title_deed = "tld"+str(randint(range_start, range_end))
+            map_sheet = "mpsh" + str(randint(range_start, range_end))
+            title_deed = "tld" + str(randint(range_start, range_end))
 
             land_transfer = LandTransfer.objects.create(
                 first_name=first_name,
@@ -430,43 +458,66 @@ def transfer_land(request, land_id=None):
                 location=location,
                 sub_location=sub_location,
                 transfer_from=transfer_from,
+                old_title_deed=old_title_deed,
                 map_sheet=map_sheet,
                 title_deed=title_deed,
                 transfer_size=transfer_size
             )
-            land_transfer.save()
-            new_land_size = float(land.approximate_size) - float(transfer_size)
 
-            land.remaining_size = new_land_size
-            if new_land_size == 0:
-                land.is_onsale = False
-                land.transferred_completely = True
-            else:
-                land.transferred_completely = False
-            land.save()
 
-            # send notification to the owner confirming the transfer
-            user = get_object_or_404(User, username=str(request.user))
-            profile = get_object_or_404(LandUserProfile, user=user)
-            phone_number = profile.phone_number
-            message = "Land was successfully transferred {0} Acres of your land to {1} {2} {3}".format(
-                transfer_size, first_name, middle_name, last_name
-            )
+            #MAKE CHECKOUT HERE
+
             try:
-                username = settings.AT_USERNAME
-                api_key = settings.AT_API_KEY
-                sender = str(settings.AT_SENDER)
-                gateway = AfricasTalkingGateway(username, api_key, sender)
+                apiKey = sandbox_apiKey
+                username = sandbox_username
+                print sandbox_productName
 
-                gateway.sendMessage(phone_number, message)
-                return HttpResponse(message)
+                print sandbox_currencyCode
+
+                print sandbox_username
+                print sandbox_apiKey
+                productName = sandbox_productName
+                currencyCode = sandbox_currencyCode
+                metadata = sandbox_metadata
+                phoneNumber = transfer_fee_form.cleaned_data['phone_number']
+                amount = float(transfer_fee_form.cleaned_data['amount'])
+
+                gateway = AfricasTalkingGateway(username, apiKey, "sandbox")
+                transactionId = gateway.initiateMobilePaymentCheckout(
+                    productName,
+                    phoneNumber,
+                    currencyCode,
+                    amount,
+                    metadata
+                )
+                payment_datails = "Transfer Fee charges for Land".format(old_title_deed)
+                if transactionId is not None:
+                    # create the payment object here
+                    payment = LandTransFerFeePayment.objects.create(
+                        land_title_deed=old_title_deed,
+                        transferred_size=transfer_size,
+                        transaction_id=transactionId,
+                        phone_number=phoneNumber,
+                        payment_mode="Mpesa",
+                        amount=amount,
+                        details=payment_datails,
+                        status="Pending"
+                    )
+                    land_transfer.save()
+                    payment.save()
+                    return HttpResponse("Payment Initiated successfully Kindly check your phone to complete payment")
+                else:
+                    return HttpResponse("Error occurred")
 
             except AfricasTalkingGatewayException, e:
-                print str(e)
-                return HttpResponse("Error{}".format(str(e)))
+                print(str(e))
+                return HttpResponse('error occured in sending checkout')
+
     else:
         form = LandTransferForm(initial=initial)
-    return render(request, 'land/transfer.html', {'form': form})
+        transfer_fee_form = TransFerLandPaymentForm(initial=fee_form_initial)
+
+    return render(request, 'land/transfer.html', {'form': form, 'payment_form': transfer_fee_form})
 
 
 @login_required(login_url='/login/')
@@ -476,7 +527,7 @@ def get_notification(request):
     profile = get_object_or_404(LandUserProfile, user=user)
     receiver = profile.phone_number
     notification = Notification.objects.filter(sent_to=receiver, is_read=False)
-    all_notf = Notification.objects.filter(sent_to=receiver,)
+    all_notf = Notification.objects.filter(sent_to=receiver, )
 
     return render(request, 'land/notification.html',
                   {

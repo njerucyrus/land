@@ -30,8 +30,8 @@ class Payment(models.Model):
 
 
 class LandTransFerFeePayment(models.Model):
-    user = models.ForeignKey(User, )
-    land = models.ForeignKey(Land, )
+    land_title_deed = models.CharField(max_length=128)
+    transferred_size = models.FloatField()
     transaction_id = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=13)
     payment_mode = models.CharField(max_length=32)

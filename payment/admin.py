@@ -1,5 +1,5 @@
 from django.contrib import admin
-from payment.models import LandTransferFee, Payment
+from payment.models import LandTransferFee, Payment, LandTransFerFeePayment
 
 
 class LandTransferFeeAdmin(admin.ModelAdmin):
@@ -25,3 +25,21 @@ class PaymentAdmin(admin.ModelAdmin):
     class Meta:
         model = Payment
 admin.site.register(Payment, PaymentAdmin)
+
+
+class LandTransFerFeePaymentAdmin(admin.ModelAdmin):
+    list_display = [
+        'transaction_id',
+        'land_title_deed',
+        'transferred_size',
+        'phone_number',
+        'amount',
+        'payment_mode',
+        'status',
+        'details',
+        'transaction_date'
+    ]
+
+    class Meta:
+        model = LandTransFerFeePayment
+admin.site.register(LandTransFerFeePayment, LandTransFerFeePaymentAdmin)

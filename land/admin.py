@@ -5,13 +5,14 @@ from land.models import (
     ChangeLandOwnership,
     Notification,
     LandTransfer,
+    LandSales,
 )
 
 
 # REGISTER ALL MODELS TO ADMIN SITE
 
 class LandUserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'id_no', 'district', 'ward', 'location', 'address']
+    list_display = ['user', 'id_no', 'phone_number', 'district', 'ward', 'location', 'address']
 
     class Meta:
         model = LandUserProfile
@@ -79,3 +80,17 @@ class NotificationAdmin(admin.ModelAdmin):
     class Meta:
         model = Notification
 admin.site.register(Notification, NotificationAdmin)
+
+
+class LandSalesAdmin(admin.ModelAdmin):
+    list_display = ['land',
+                    'owner',
+                    'buyer',
+                    'deposit_amount',
+                    'uncleared_amount',
+                    'transfer_made',
+                    'date_deposited'
+                    ]
+    class Meta:
+        model = LandSales
+admin.site.register(LandSales, LandSalesAdmin)
